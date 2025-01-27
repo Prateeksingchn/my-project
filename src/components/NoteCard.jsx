@@ -1,52 +1,43 @@
 import React from 'react';
-import { Pen, Trash2 } from 'lucide-react';
+import { Star, Pencil } from 'lucide-react';
 
 const NoteCard = ({ note, onEdit, onDelete, darkMode }) => {
-  const formattedDate = new Date(note.createdAt).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-
-  const getContrastColor = (hexColor) => {
-    // Convert hex to RGB
-    const r = parseInt(hexColor.slice(1, 3), 16);
-    const g = parseInt(hexColor.slice(3, 5), 16);
-    const b = parseInt(hexColor.slice(5, 7), 16);
-    
-    // Calculate luminance
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
-    // Return black for light colors, white for dark colors
-    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
-
-  const textColor = getContrastColor(note.color);
 
   return (
     <div 
-      className="rounded-lg shadow-md overflow-hidden flex flex-col transition-transform duration-500 hover:scale-105"
-      style={{ backgroundColor: note.color }}
+      className="rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-lg group min-h-[200px] relative"
+      style={{ backgroundColor: note.color || '#FFE4B5' }} // Default to a soft yellow if no color
     >
-      <div className="p-4 flex-grow h-48">
-        <p className="break-words" style={{ color: textColor }}>{note.text}</p>
-      </div>
-      <div className="bg-white bg-opacity-20 p-3 flex justify-between items-center">
-        <span className="text-sm" style={{ color: textColor }}>{formattedDate}</span>
-        <div className="space-x-2">
-          <button
-            onClick={onEdit}
-            className="p-1 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors duration-200"
-            aria-label="Edit note"
-          >
-            <Pen size={16} style={{ color: textColor }} />
+      <div className="p-6 flex flex-col h-full">
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-xl font-semibold text-gray-800 flex-grow pr-4">
+            {note.title || 'Untitled Note'}
+          </h3>
+          <button className="text-gray-600 hover:text-yellow-500 transition-colors">
+            <Star size={20} />
           </button>
-          <button
-            onClick={onDelete}
-            className="p-1 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors duration-200"
-            aria-label="Delete note"
+        </div>
+
+        <p className="text-gray-700 text-base mb-4 flex-grow">
+          {note.text}
+        </p>
+
+        <div className="flex justify-between items-center mt-auto">
+          <span className="text-sm text-gray-600">
+            {formatDate(note.createdAt)}
+          </span>
+          <button 
+            onClick={() => onEdit(note)}
+            className="p-2 rounded-full bg-black/10 hover:bg-black/20 transition-colors"
           >
-            <Trash2 size={16} style={{ color: textColor }} />
+            <Pencil size={16} className="text-gray-700" />
           </button>
         </div>
       </div>

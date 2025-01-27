@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { LuSun } from "react-icons/lu";
+import { IoMoonOutline } from "react-icons/io5";
 import Header from './Header';
 import NoteList from './NoteList';
 import NoteModal from './NoteModal';
 import CategorySelector from './CategorySelector';
+import Sidebar from './Sidebar';
+import TodoList from './TodoList';
 
 const NoteTakingApp = () => {
   const [notes, setNotes] = useState([]);
@@ -66,7 +68,7 @@ const NoteTakingApp = () => {
     saveNotesToLocalStorage(updatedNotes);
   };
 
-  const toggleDarkMode = () => {
+  const toggleTheme = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
     localStorage.setItem('darkMode', JSON.stringify(newDarkMode));
@@ -82,30 +84,61 @@ const NoteTakingApp = () => {
   );
 
   return (
-    <div className={`${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'} min-h-screen p-8 transition-colors duration-300`}>
-      <div className={`max-w-6xl mx-auto ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg overflow-hidden transition-colors duration-300`}>
-        <Header 
-          onSearch={handleSearch} 
-          onAddNote={handleAddNote} 
-          darkMode={darkMode}
-          toggleDarkMode={toggleDarkMode}
-        />
-        <div className="p-4">
+    <div className={`flex h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <Sidebar 
+        darkMode={darkMode} 
+        onCreateNote={handleAddNote} 
+        onToggleTheme={toggleTheme}
+      />
+      
+      <main className="flex-1 overflow-auto">
+        <div className="max-w-5xl mx-auto p-8">
+          <div className="flex items-center justify-between mb-8">
+            <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Notes</h1>
+            <div className="flex items-center space-x-4">
+              <button
+                className={`px-4 py-2 rounded-lg ${
+                  darkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                Today
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg ${
+                  darkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                This Week
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg ${
+                  darkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                This Month
+              </button>
+            </div>
+          </div>
+
           <CategorySelector 
             categories={['All', ...categories]} 
             selectedCategory={selectedCategory} 
             onCategoryChange={handleCategoryChange}
             darkMode={darkMode}
           />
+
+          <NoteList
+            notes={filteredNotes}
+            searchTerm={searchTerm}
+            onEditNote={handleEditNote}
+            onDeleteNote={handleDeleteNote}
+            darkMode={darkMode}
+          />
         </div>
-        <NoteList
-          notes={filteredNotes}
-          searchTerm={searchTerm}
-          onEditNote={handleEditNote}
-          onDeleteNote={handleDeleteNote}
-          darkMode={darkMode}
-        />
-      </div>
+      </main>
+
+      <TodoList darkMode={darkMode} />
+
       {showModal && (
         <NoteModal
           note={editingNote}
@@ -115,15 +148,6 @@ const NoteTakingApp = () => {
           darkMode={darkMode}
         />
       )}
-      <button
-        onClick={toggleDarkMode}
-        className={`fixed top-10 right-4 px-4 py-3 rounded-full ${
-          darkMode ? 'bg-yellow-400 text-gray-900' : 'bg-gray-800 text-yellow-400'
-        } transition-colors duration-300`}
-        aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-      >
-        <FontAwesomeIcon icon={darkMode ? faSun : faMoon} size="lg" />
-      </button>
     </div>
   );
 };
