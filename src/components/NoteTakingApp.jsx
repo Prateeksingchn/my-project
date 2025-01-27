@@ -31,6 +31,7 @@ const NoteTakingApp = () => {
 
   const handleSearch = (term) => {
     setSearchTerm(term);
+    setSelectedCategory('All');
   };
 
   const handleAddNote = () => {
@@ -78,46 +79,44 @@ const NoteTakingApp = () => {
     setSelectedCategory(category);
   };
 
-  const filteredNotes = notes.filter(note => 
-    (selectedCategory === 'All' || note.category === selectedCategory) &&
-    (note.text && note.text.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredNotes = notes.filter(note => {
+    const noteDate = new Date(note.createdAt);
+    const today = new Date();
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    return (
+      (selectedCategory === 'All' || note.category === selectedCategory) &&
+      (searchTerm === 'Today' ? noteDate.toDateString() === today.toDateString() :
+       searchTerm === 'This Week' ? noteDate >= startOfWeek :
+       searchTerm === 'This Month' ? noteDate >= startOfMonth :
+       note.text && note.text.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  });
 
   return (
-    <div className={`flex h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`flex h-screen ${darkMode ? 'bg-[#191919]' : 'bg-gray-50'}`}>
       <Sidebar 
         darkMode={darkMode} 
         onCreateNote={handleAddNote} 
         onToggleTheme={toggleTheme}
       />
       
-      <main className="flex-1 overflow-auto">
-        <div className="max-w-5xl mx-auto p-8">
-          <div className="flex items-center justify-between mb-8">
+      <main className="flex-1" style={{ overflow: 'hidden', scrollbarWidth: 'none' }}>
+        <div className="max-w-5xl mx-auto p-4 sm:p-8 overflow-auto h-full" style={{ overflowY: 'scroll', scrollbarWidth: 'none' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-8">
             <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Notes</h1>
-            <div className="flex items-center space-x-4">
-              <button
-                className={`px-4 py-2 rounded-lg ${
-                  darkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-200 text-gray-700'
-                }`}
-              >
+            {/* <div className="flex items-center space-x-2 sm:space-x-2 bg-gray-300 rounded-3xl py-1 px-1">
+              <button className={`px-3 py-2 text-sm rounded-full transition duration-200 ease-in-out ${searchTerm === 'Today' ? 'bg-white text-black' : 'bg-transparent text-gray-700 hover:bg-gray-200'}`} onClick={() => handleSearch('Today')}>
                 Today
               </button>
-              <button
-                className={`px-4 py-2 rounded-lg ${
-                  darkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-200 text-gray-700'
-                }`}
-              >
+              <button className={`px-3 py-2 text-sm rounded-full transition duration-200 ease-in-out ${searchTerm === 'This Week' ? 'bg-white text-black' : 'bg-transparent text-gray-700 hover:bg-gray-200'}`} onClick={() => handleSearch('This Week')}>
                 This Week
               </button>
-              <button
-                className={`px-4 py-2 rounded-lg ${
-                  darkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-200 text-gray-700'
-                }`}
-              >
+              <button className={`px-3 py-2 text-sm rounded-full transition duration-200 ease-in-out ${searchTerm === 'This Month' ? 'bg-white text-black' : 'bg-transparent text-gray-700 hover:bg-gray-200'}`} onClick={() => handleSearch('This Month')}>
                 This Month
               </button>
-            </div>
+            </div> */}
           </div>
 
           <CategorySelector 

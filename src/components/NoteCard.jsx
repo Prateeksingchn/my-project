@@ -12,7 +12,7 @@ const NoteCard = ({ note, onEdit, onDelete, darkMode }) => {
 
   return (
     <div 
-      className="rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-lg group min-h-[200px] relative"
+      className="rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-lg group min-h-[250px] relative"
       style={{ backgroundColor: note.color || '#FFE4B5' }} // Default to a soft yellow if no color
     >
       <div className="p-6 flex flex-col h-full">
@@ -30,7 +30,7 @@ const NoteCard = ({ note, onEdit, onDelete, darkMode }) => {
         </p>
 
         <div className="flex justify-between items-center mt-auto">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-800">
             {formatDate(note.createdAt)}
           </span>
           <button 

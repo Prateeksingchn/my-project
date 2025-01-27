@@ -51,68 +51,70 @@ const TodoList = ({ darkMode }) => {
   };
 
   return (
-    <div className={`w-80 border-l ${darkMode ? 'border-gray-800' : 'border-gray-200'} p-6`}>
-      <h2 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-        Today's Tasks
-      </h2>
-      
-      <form onSubmit={addTodo} className="mb-6">
-        <div className="flex items-center space-x-2">
-          <input
-            type="text"
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            placeholder="Add a task..."
-            className={`flex-1 p-2 rounded-lg text-sm ${
-              darkMode 
-                ? 'bg-gray-800 text-white border-gray-700' 
-                : 'bg-gray-100 text-gray-900 border-gray-200'
-            } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
-          />
-          <button
-            type="submit"
-            className={`p-2 rounded-lg ${
-              darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'
-            }`}
-          >
-            <PlusCircle size={20} className="text-blue-500" />
-          </button>
-        </div>
-      </form>
-
-      <div className="space-y-2">
-        {todos.map(todo => (
-          <div
-            key={todo.id}
-            className={`group flex items-center justify-between p-3 rounded-lg ${
-              darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
-            }`}
-          >
-            <div className="flex items-center space-x-3 flex-grow">
-              <button
-                onClick={() => toggleTodo(todo.id)}
-                className={`transition-colors duration-200 ${
-                  todo.completed ? 'text-green-500' : 'text-gray-400'
-                }`}
-              >
-                {todo.completed ? <CheckCircle2 size={18} /> : <Circle size={18} />}
-              </button>
-              <span className={`text-sm ${
-                todo.completed 
-                  ? 'line-through text-gray-500' 
-                  : darkMode ? 'text-white' : 'text-gray-900'
-              }`}>
-                {todo.text}
-              </span>
-            </div>
+    <div className={`w-full sm:w-72 border-l ${darkMode ? 'border-gray-800' : 'border-gray-200'} py-6 px-3 ${darkMode ? 'bg-[#202020]' : 'bg-white'} overflow-hidden`} style={{ overflow: 'hidden' }}>
+      <div className="flex-grow overflow-auto" style={{ overflowY: 'scroll', scrollbarWidth: 'none' }}>
+        <h2 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+          Today's Tasks
+        </h2>
+        
+        <form onSubmit={addTodo} className="mb-6">
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="Add a task..."
+              className={`flex-1 p-2 rounded-lg text-sm ${
+                darkMode 
+                  ? 'bg-gray-800 text-white border-gray-700' 
+                  : 'bg-gray-100 text-gray-900 border-gray-200'
+              } border focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            />
             <button
-              onClick={() => deleteTodo(todo.id)}
-              className="opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity duration-200"
+              type="submit"
+              className={`p-2 rounded-lg ${
+                darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
             >
-              <X size={16} />
+              <PlusCircle size={20} className="text-blue-500" />
             </button>
           </div>
-        ))}
+        </form>
+
+        <div className="space-y-2">
+          {todos.map(todo => (
+            <div
+              key={todo.id}
+              className={`group flex items-center justify-between p-3 rounded-lg ${
+                darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center space-x-3 flex-grow">
+                <button
+                  onClick={() => toggleTodo(todo.id)}
+                  className={`transition-colors duration-200 ${
+                    todo.completed ? 'text-green-500' : 'text-gray-400'
+                  }`}
+                >
+                  {todo.completed ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+                </button>
+                <span className={`text-sm ${
+                  todo.completed 
+                    ? 'line-through text-gray-500' 
+                    : darkMode ? 'text-white' : 'text-gray-900'
+                }`}>
+                  {todo.text}
+                </span>
+              </div>
+              <button
+                onClick={() => deleteTodo(todo.id)}
+                className="opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity duration-200"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

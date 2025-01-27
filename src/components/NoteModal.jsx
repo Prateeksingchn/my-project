@@ -48,7 +48,7 @@ const NoteModal = ({ note, onSave, onClose, categories, darkMode }) => {
         exit="exit"
       >
         <motion.div 
-          className={`${darkMode ? 'bg-gray-900' : 'bg-white'} rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
+          className={`${darkMode ? 'bg-[#202020]' : 'bg-white'} rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
           variants={modalVariants}
         >
           <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
