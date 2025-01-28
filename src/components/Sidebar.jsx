@@ -32,7 +32,7 @@ const Sidebar = ({ darkMode, onCreateNote, onToggleTheme }) => {
               </button>
             </div>
             <div>
-              <h1 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>NotesApp</h1>
+              <h1 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>SnapNotes</h1>
               <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Prateek</p>
             </div>
           </div>
