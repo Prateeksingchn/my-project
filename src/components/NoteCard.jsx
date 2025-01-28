@@ -25,9 +25,19 @@ const NoteCard = ({ note, onEdit, onDelete, darkMode }) => {
           </button>
         </div>
 
-        <p className="text-gray-700 text-base mb-4 flex-grow">
-          {note.text}
-        </p>
+        <div className="flex-grow overflow-y-auto" style={{ maxHeight: '150px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <style>
+            {`
+              /* Hide scrollbar for WebKit browsers */
+              .scrollbar-hidden::-webkit-scrollbar {
+                display: none;
+              }
+            `}
+          </style>
+          <p className="text-gray-700 text-base mb-4 scrollbar-hidden" 
+             dangerouslySetInnerHTML={{ __html: note.text.replace(/\n/g, '<br />') }} 
+          />
+        </div>
 
         <div className="flex justify-between items-center mt-auto">
           <span className="text-sm text-gray-800">

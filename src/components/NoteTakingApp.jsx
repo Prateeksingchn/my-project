@@ -15,7 +15,7 @@ const NoteTakingApp = () => {
   const [editingNote, setEditingNote] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [categories, setCategories] = useState(['Work', 'Personal', 'Ideas']);
+  const [categories, setCategories] = useState(['Work', 'Personal', 'Ideas', 'Study', 'Shopping', 'Health']);
 
   useEffect(() => {
     const storedNotes = JSON.parse(localStorage.getItem('notes')) || [];

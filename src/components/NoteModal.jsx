@@ -6,6 +6,7 @@ const NoteModal = ({ note, onSave, onClose, categories, darkMode }) => {
   const [text, setText] = useState('');
   const [category, setCategory] = useState('');
   const [color, setColor] = useState('#ffffff');
+  const [selectedColor, setSelectedColor] = useState(color);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [title, setTitle] = useState('');
 
@@ -15,11 +16,13 @@ const NoteModal = ({ note, onSave, onClose, categories, darkMode }) => {
       setCategory(note.category || '');
       setColor(note.color || '#ffffff');
       setTitle(note.title || '');
+      setSelectedColor(note.color || '#ffffff');
     } else {
       setText('');
       setCategory('');
       setColor('#ffffff');
       setTitle('');
+      setSelectedColor('#ffffff');
     }
   }, [note]);
 
@@ -28,7 +31,7 @@ const NoteModal = ({ note, onSave, onClose, categories, darkMode }) => {
       title,
       text, 
       category, 
-      color
+      color: selectedColor
     });
     onClose();
   };
@@ -95,33 +98,22 @@ const NoteModal = ({ note, onSave, onClose, categories, darkMode }) => {
                   </option>
                 ))}
               </select>
-              <button
-                onClick={() => setShowColorPicker(!showColorPicker)}
-                className={`p-3 rounded-xl ${
-                  darkMode ? 'bg-gray-800 hover:bg-gray-700 border-gray-700' : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
-                } border transition-all duration-200`}
-              >
-                <Palette size={20} className={darkMode ? 'text-white' : 'text-gray-800'} />
-              </button>
             </div>
-            <AnimatePresence>
-              {showColorPicker && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="mb-6"
-                >
-                  <input
-                    type="color"
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    className="w-full h-12 rounded-xl cursor-pointer"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="flex space-x-2 mb-6">
+              {['blue', 'red', 'green', 'cyan', 'yellow', 'purple', 'skyblue', 'orange', 'gray'].map((color) => (
+                <div
+                  key={color}
+                  onClick={() => {
+                    setColor(color);
+                    setSelectedColor(color);
+                  }}
+                  className={`w-8 h-8 rounded-full cursor-pointer border-2 ${
+                    color === selectedColor ? 'ring-2 ring-offset-2 ring-blue-500' : ''
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
           </div>
           <div className="flex justify-end px-6 py-4 border-t border-gray-200 dark:border-gray-700">
             <button
