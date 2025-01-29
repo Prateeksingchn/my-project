@@ -7,6 +7,9 @@ import NoteModal from './NoteModal';
 import CategorySelector from './CategorySelector';
 import Sidebar from './Sidebar';
 import TodoList from './TodoList';
+import { auth } from '../firebase/config';
+import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 const NoteTakingApp = () => {
   const [notes, setNotes] = useState([]);
@@ -16,6 +19,7 @@ const NoteTakingApp = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [categories, setCategories] = useState(['Work', 'Personal', 'Ideas', 'Study', 'Shopping', 'Health']);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedNotes = JSON.parse(localStorage.getItem('notes')) || [];
@@ -79,6 +83,15 @@ const NoteTakingApp = () => {
     setSelectedCategory(category);
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   const filteredNotes = notes.filter(note => {
     const noteDate = new Date(note.createdAt);
     const today = new Date();
@@ -106,17 +119,9 @@ const NoteTakingApp = () => {
         <div className="max-w-5xl mx-auto p-4 sm:p-8 overflow-auto h-full" style={{ overflowY: 'scroll', scrollbarWidth: 'none' }}>
           <div className="flex flex-col sm:flex-row items-center justify-between mb-8">
             <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Notes</h1>
-            {/* <div className="flex items-center space-x-2 sm:space-x-2 bg-gray-300 rounded-3xl py-1 px-1">
-              <button className={`px-3 py-2 text-sm rounded-full transition duration-200 ease-in-out ${searchTerm === 'Today' ? 'bg-white text-black' : 'bg-transparent text-gray-700 hover:bg-gray-200'}`} onClick={() => handleSearch('Today')}>
-                Today
-              </button>
-              <button className={`px-3 py-2 text-sm rounded-full transition duration-200 ease-in-out ${searchTerm === 'This Week' ? 'bg-white text-black' : 'bg-transparent text-gray-700 hover:bg-gray-200'}`} onClick={() => handleSearch('This Week')}>
-                This Week
-              </button>
-              <button className={`px-3 py-2 text-sm rounded-full transition duration-200 ease-in-out ${searchTerm === 'This Month' ? 'bg-white text-black' : 'bg-transparent text-gray-700 hover:bg-gray-200'}`} onClick={() => handleSearch('This Month')}>
-                This Month
-              </button>
-            </div> */}
+            <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded">
+              Logout
+            </button>
           </div>
 
           <CategorySelector 
