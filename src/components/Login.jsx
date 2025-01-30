@@ -165,12 +165,20 @@ const Login = () => {
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover rounded-tl-[50px] rounded-br-[50px]"
         />
-        <div className="relative h-full flex flex-col justify-start items-center text-white p-4 space-y-8">
-          <div className="space-y-1 text-center max-w-lg">
-            <h1 className="text-[2.5rem] font-bold font-['Ms_Madi']">
-              Your Digital Notebook
-            </h1>
-            
+        <div className="absolute  left-0 right-0 h-48 flex flex-col items-start text-white p-4 space-y-2">
+          {/* Top-left corner */}
+          <h1 className="text-3xl font-['Ms_Madi']">
+            Your Digital Notebook
+          </h1>
+          
+          {/* Centered text */}
+          <div className="flex-grow flex items-center justify-center w-full">
+            <p className="text-3xl text-center font-['Ms_Madi']">Capture your thoughts and ideas.</p>
+          </div>
+
+          {/* Bottom-right corner */}
+          <div className="text-right w-full">
+            <p className="text-3xl font-['Ms_Madi']">Start your journey today!</p>
           </div>
         </div>
       </div>

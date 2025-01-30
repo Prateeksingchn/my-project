@@ -25,3 +25,6 @@ dist-ssr
 
 # Ignore Firebase configuration files
 config.js
+
+# Ignore environment variables
+.env
