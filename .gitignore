@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Ignore Firebase configuration files
-firebase/config.js
+config.js

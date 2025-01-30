@@ -40,6 +40,16 @@ const Login = () => {
       {/* Left side - Login Form */}
       <div className="w-full lg:w-[55%] flex items-center justify-center p-8 lg:p-12">
         <div className="w-full max-w-md space-y-8">
+          {/* Branding Section */}
+          <div className="flex items-start space-x-2 mb-8">
+            <div className="text-2xl font-bold flex items-center">
+              <svg viewBox="0 0 24 24" className="w-8 h-8 mr-2" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+              Hibiki
+            </div>
+          </div>
+
           <div className="space-y-2">
             <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
             <p className="text-gray-600">
@@ -53,6 +63,7 @@ const Login = () => {
             </p>
           </div>
 
+          {/* Rest of the form remains the same */}
           <form onSubmit={handleLogin} className="space-y-6">
             {error && (
               <div className="p-4 rounded-lg bg-red-50 border border-red-200">
@@ -111,28 +122,6 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 text-sm text-gray-600"
-                >
-                  Remember me
-                </label>
-              </div>
-              <button
-                type="button"
-                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Forgot password?
-              </button>
-            </div>
-
             <button
               type="submit"
               className="w-full py-3 px-4 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 font-medium"
@@ -176,20 +165,13 @@ const Login = () => {
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover rounded-tl-[50px] rounded-br-[50px]"
         />
-        {/* <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/90 to-violet-600/90"></div> */}
         <div className="relative h-full flex flex-col justify-start items-center text-white p-4 space-y-8">
           <div className="space-y-1 text-center max-w-lg">
             <h1 className="text-[2.5rem] font-bold font-['Ms_Madi']">
               Your Digital Notebook
             </h1>
+            
           </div>
-          {/* <div className="font-['Ms_Madi']">
-            <h2 className="text-2xl font-medium">Where Ideas Take Flight</h2>
-            <p className="text-lg text-white/90 w-72">
-              Organize your thoughts, capture inspiration, and let your
-              creativity soar in one beautiful space.
-            </p>
-          </div> */}
         </div>
       </div>
     </div>
