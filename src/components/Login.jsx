@@ -38,26 +38,196 @@ const Login = () => {
   return (
     <div className="min-h-screen flex bg-[#f8fafc] p-2">
       {/* Left side - Login Form */}
-      <div className="w-full lg:w-[55%] flex items-center justify-center p-8 lg:p-12">
-        <div className="w-full max-w-md space-y-8">
-          {/* Branding Section */}
-          <div className="flex items-start space-x-2 mb-8">
-            <div className="text-2xl font-bold flex items-center">
-              <svg viewBox="0 0 24 24" className="w-8 h-8 mr-2" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      <div className="w-full lg:w-[55%] flex items-center justify-center p-4 lg:p-8">
+        <div className="w-full max-w-md space-y-4">
+          {/* Enhanced Animated Branding Section */}
+          <div className="absolute top-4 left-4">
+            <div className="text-2xl font-bold flex items-center group">
+              <svg 
+                viewBox="0 0 24 24" 
+                className="w-8 h-8 mr-2 transform group-hover:scale-110 transition-all duration-300 ease-in-out" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                {/* Animated Notepad Frame */}
+                <path 
+                  d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4" 
+                  className="transition-all duration-500 group-hover:stroke-indigo-600"
+                  style={{ animation: 'borderDraw 1.5s ease-out forwards' }}
+                />
+                <path 
+                  d="M4 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2" 
+                  className="transition-all duration-500 group-hover:stroke-indigo-600"
+                  style={{ animation: 'borderDraw 1.5s ease-out forwards' }}
+                />
+                
+                {/* Enhanced Animated Lines */}
+                <line 
+                  x1="8" 
+                  y1="8" 
+                  x2="16" 
+                  y2="8"
+                  className="origin-left group-hover:stroke-indigo-500"
+                  style={{ 
+                    animation: 'drawLineAndFloat 3s ease-in-out infinite',
+                    animationDelay: '0s'
+                  }}
+                />
+                <line 
+                  x1="8" 
+                  y1="12" 
+                  x2="16" 
+                  y2="12"
+                  className="origin-left group-hover:stroke-indigo-500"
+                  style={{ 
+                    animation: 'drawLineAndFloat 3s ease-in-out infinite',
+                    animationDelay: '0.2s'
+                  }}
+                />
+                <line 
+                  x1="8" 
+                  y1="16" 
+                  x2="12" 
+                  y2="16"
+                  className="origin-left group-hover:stroke-indigo-500"
+                  style={{ 
+                    animation: 'drawLineAndFloat 3s ease-in-out infinite',
+                    animationDelay: '0.4s'
+                  }}
+                />
+
+                {/* Enhanced Camera Lens */}
+                <circle 
+                  cx="17" 
+                  cy="4" 
+                  r="1" 
+                  fill="currentColor"
+                  className="group-hover:fill-indigo-600"
+                  style={{ animation: 'enhancedPulse 2s infinite' }}
+                />
+
+                {/* Enhanced Quick-access Tabs */}
+                <path 
+                  d="M8 2v2" 
+                  className="group-hover:stroke-indigo-400"
+                  style={{ animation: 'tabBounce 1s ease-out forwards' }}
+                />
+                <path 
+                  d="M12 2v2" 
+                  className="group-hover:stroke-indigo-400"
+                  style={{ animation: 'tabBounce 1s ease-out forwards', animationDelay: '0.1s' }}
+                />
+                <path 
+                  d="M16 2v2" 
+                  className="group-hover:stroke-indigo-400"
+                  style={{ animation: 'tabBounce 1s ease-out forwards', animationDelay: '0.2s' }}
+                />
               </svg>
-              Hibiki
+              <span 
+                className="transition-all duration-300 group-hover:text-indigo-600"
+                style={{ animation: 'fadeInScale 0.5s ease-out' }}
+              >
+                SnapNotes
+              </span>
             </div>
           </div>
 
-          <div className="space-y-2">
+          <style>
+            {`
+              @keyframes borderDraw {
+                0% {
+                  stroke-dasharray: 100;
+                  stroke-dashoffset: 100;
+                }
+                100% {
+                  stroke-dasharray: 100;
+                  stroke-dashoffset: 0;
+                }
+              }
+
+              @keyframes drawLineAndFloat {
+                0% {
+                  stroke-dasharray: 20;
+                  stroke-dashoffset: 20;
+                  transform: translateX(0);
+                }
+                20% {
+                  stroke-dasharray: 20;
+                  stroke-dashoffset: 0;
+                  transform: translateX(0);
+                }
+                50% {
+                  transform: translateX(2px);
+                }
+                80% {
+                  transform: translateX(-1px);
+                }
+                100% {
+                  transform: translateX(0);
+                }
+              }
+
+              @keyframes enhancedPulse {
+                0% {
+                  transform: scale(1);
+                  opacity: 1;
+                  filter: drop-shadow(0 0 0 rgba(79, 70, 229, 0));
+                }
+                50% {
+                  transform: scale(1.5);
+                  opacity: 0.7;
+                  filter: drop-shadow(0 0 2px rgba(79, 70, 229, 0.5));
+                }
+                100% {
+                  transform: scale(1);
+                  opacity: 1;
+                  filter: drop-shadow(0 0 0 rgba(79, 70, 229, 0));
+                }
+              }
+
+              @keyframes tabBounce {
+                0% {
+                  transform: translateY(-8px);
+                  opacity: 0;
+                }
+                50% {
+                  transform: translateY(4px);
+                }
+                75% {
+                  transform: translateY(-2px);
+                }
+                100% {
+                  transform: translateY(0);
+                  opacity: 1;
+                }
+              }
+
+              @keyframes fadeInScale {
+                0% {
+                  opacity: 0;
+                  transform: scale(0.95);
+                }
+                100% {
+                  opacity: 1;
+                  transform: scale(1);
+                }
+              }
+
+              .group:hover svg path,
+              .group:hover svg line {
+                filter: drop-shadow(0 0 2px rgba(79, 70, 229, 0.3));
+              }
+            `}
+          </style>
+
+          <div className="space-y-0 mt-12">
             <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
             <p className="text-gray-600">
-              New here?{" "}
-              <Link
-                to="/signup"
-                className="text-indigo-600 hover:text-indigo-500 font-medium"
-              >
+              New here?{' '}
+              <Link to="/signup" className="text-indigo-600 hover:text-indigo-500 font-medium">
                 Create an account
               </Link>
             </p>
@@ -165,20 +335,20 @@ const Login = () => {
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover rounded-tl-[50px] rounded-br-[50px]"
         />
-        <div className="absolute  left-0 right-0 h-48 flex flex-col items-start text-white p-4 space-y-2">
+        <div className="absolute bottom-[50px] left-0 right-0 h-48 flex flex-col items-start text-white p-4 space-y-2">
           {/* Top-left corner */}
-          <h1 className="text-3xl font-['Ms_Madi']">
+          <h1 className="text-[2rem] font-['Ms_Madi']">
             Your Digital Notebook
           </h1>
           
           {/* Centered text */}
           <div className="flex-grow flex items-center justify-center w-full">
-            <p className="text-3xl text-center font-['Ms_Madi']">Capture your thoughts and ideas.</p>
+            <p className="text-[2rem] text-center font-['Ms_Madi']">Capture your thoughts and ideas.</p>
           </div>
 
           {/* Bottom-right corner */}
           <div className="text-right w-full">
-            <p className="text-3xl font-['Ms_Madi']">Start your journey today!</p>
+            <p className="text-[2rem] font-['Ms_Madi']">Start your journey today!</p>
           </div>
         </div>
       </div>
