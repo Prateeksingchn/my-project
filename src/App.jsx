@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Signup from './components/Signup';
 import NoteTakingApp from './components/NoteTakingApp';
-import { auth } from './firebase/config';
+import { auth } from '../src/firebase/config';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 const App = () => {
