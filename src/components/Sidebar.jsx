@@ -1,10 +1,21 @@
 import React from 'react';
-import { PlusCircle, Home, Star, Archive, HelpCircle, Settings, Moon, Sun, LayoutGrid, LayoutList, FolderClosed } from 'lucide-react';
+import { PlusCircle, Home, Star, Archive, HelpCircle, Settings, Moon, Sun, LayoutGrid, LayoutList, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase/config';
 
 const Sidebar = ({ darkMode, onCreateNote, onToggleTheme, viewMode, onToggleView }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   const sidebarItems = [
     { icon: <PlusCircle size={20} />, label: 'Create Note', shortcut: '⌘N', onClick: onCreateNote, path: null },
@@ -13,22 +24,13 @@ const Sidebar = ({ darkMode, onCreateNote, onToggleTheme, viewMode, onToggleView
     { icon: <Archive size={20} />, label: 'Archives', shortcut: '⌘R', onClick: () => navigate('/archived'), path: '/archived' },
   ];
 
-  const folders = [
-    'Bucket List',
-    'Finances',
-    'Travel Plans',
-    'Shopping',
-    'Personal',
-    'Work',
-    'Projects'
-  ];
-
   // Check if current path is dashboard or root
   const isHome = location.pathname === '/dashboard' || location.pathname === '/';
 
   return (
-    <div className={`w-44 flex flex-col h-screen border-r ${darkMode ? 'bg-[#202020] border-gray-800' : 'bg-gray-50 border-gray-200'} sm:w-56`} style={{ overflow: 'hidden' }}>
+    <div className={`w-44 flex flex-col h-screen border-r ${darkMode ? 'bg-[#202020] border-gray-800' : 'bg-gray-50 border-gray-200'} sm:w-56`}>
       <div className="flex-grow overflow-auto" style={{ overflowY: 'scroll', scrollbarWidth: 'none' }}>
+        {/* Header */}
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className={`w-10 h-10 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-gray-200'} flex items-center justify-center`}>
@@ -63,6 +65,7 @@ const Sidebar = ({ darkMode, onCreateNote, onToggleTheme, viewMode, onToggleView
           </button>
         </div>
 
+        {/* Menu Items */}
         <div className="mt-6 px-3">
           {sidebarItems.map((item, index) => (
             <button
@@ -93,28 +96,7 @@ const Sidebar = ({ darkMode, onCreateNote, onToggleTheme, viewMode, onToggleView
           ))}
         </div>
 
-        <div className="mt-8 px-3">
-          <div className="flex items-center justify-between px-3 mb-4">
-            <span className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Folders</span>
-            <button className={`p-1 rounded-md ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200'}`}>
-              <PlusCircle size={16} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
-            </button>
-          </div>
-          {folders.map((folder, index) => (
-            <button
-              key={index}
-              className={`w-full flex items-center space-x-3 p-3 rounded-lg mb-1 text-sm ${
-                darkMode 
-                  ? 'hover:bg-gray-800 text-gray-300' 
-                  : 'hover:bg-gray-200 text-gray-700'
-              }`}
-            >
-              <FolderClosed size={18} />
-              <span>{folder}</span>
-            </button>
-          ))}
-        </div>
-
+        {/* Footer */}
         <div className="mt-auto px-3 mb-4 border-t border-gray-200 dark:border-gray-700 pt-4">
           <button className={`w-full flex items-center space-x-3 p-3 rounded-lg mb-1 text-sm ${
             darkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-500 hover:bg-gray-200'
@@ -127,6 +109,17 @@ const Sidebar = ({ darkMode, onCreateNote, onToggleTheme, viewMode, onToggleView
           }`}>
             <HelpCircle size={18} />
             <span>Help & Support</span>
+          </button>
+          <button 
+            onClick={handleLogout}
+            className={`w-full flex items-center space-x-3 p-3 rounded-lg mb-1 text-sm ${
+              darkMode 
+                ? 'text-red-400 hover:bg-red-500/10' 
+                : 'text-red-500 hover:bg-red-50'
+            }`}
+          >
+            <LogOut size={18} />
+            <span>Logout</span>
           </button>
         </div>
       </div>
