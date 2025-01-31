@@ -7,9 +7,10 @@ import NoteModal from './NoteModal';
 import CategorySelector from './CategorySelector';
 import Sidebar from './Sidebar';
 import TodoList from './TodoList';
-import { auth } from '../firebase/config';
+import { auth, db } from '../firebase/config';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, doc, onSnapshot } from 'firebase/firestore';
 
 const NoteTakingApp = () => {
   const [notes, setNotes] = useState([]);
@@ -22,16 +23,28 @@ const NoteTakingApp = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedNotes = JSON.parse(localStorage.getItem('notes')) || [];
-    setNotes(storedNotes);
+    if (!auth.currentUser) return;
+
+    // Subscribe to notes collection for real-time updates
+    const q = query(
+      collection(db, 'notes'),
+      where('userId', '==', auth.currentUser.uid)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const notesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setNotes(notesData);
+    });
+
+    // Load dark mode preference from localStorage (or you could store this in Firestore too)
     const storedDarkMode = JSON.parse(localStorage.getItem('darkMode')) || false;
     setDarkMode(storedDarkMode);
-  }, []);
 
-  const saveNotesToLocalStorage = (updatedNotes) => {
-    localStorage.setItem('notes', JSON.stringify(updatedNotes));
-    setNotes(updatedNotes);
-  };
+    return () => unsubscribe();
+  }, []);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -48,29 +61,38 @@ const NoteTakingApp = () => {
     setShowModal(true);
   };
 
-  const handleSaveNote = (noteData) => {
-    let updatedNotes;
-    if (editingNote) {
-      updatedNotes = notes.map(note =>
-        note.id === editingNote.id ? { ...note, ...noteData, text: noteData.text || '' } : note
-      );
-    } else {
-      const newNote = {
-        id: Date.now(),
-        ...noteData,
-        text: noteData.text || '',
-        createdAt: new Date().toISOString(),
-      };
-      updatedNotes = [...notes, newNote];
+  const handleSaveNote = async (noteData) => {
+    try {
+      if (editingNote) {
+        // Update existing note
+        const noteRef = doc(db, 'notes', editingNote.id);
+        await updateDoc(noteRef, {
+          ...noteData,
+          text: noteData.text || '',
+          updatedAt: new Date().toISOString()
+        });
+      } else {
+        // Create new note
+        await addDoc(collection(db, 'notes'), {
+          ...noteData,
+          text: noteData.text || '',
+          createdAt: new Date().toISOString(),
+          userId: auth.currentUser.uid
+        });
+      }
+      setShowModal(false);
+      setEditingNote(null);
+    } catch (error) {
+      console.error('Error saving note:', error);
     }
-    saveNotesToLocalStorage(updatedNotes);
-    setShowModal(false);
-    setEditingNote(null);
   };
 
-  const handleDeleteNote = (noteId) => {
-    const updatedNotes = notes.filter(note => note.id !== noteId);
-    saveNotesToLocalStorage(updatedNotes);
+  const handleDeleteNote = async (noteId) => {
+    try {
+      await deleteDoc(doc(db, 'notes', noteId));
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    }
   };
 
   const toggleTheme = () => {
