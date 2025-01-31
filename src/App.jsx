@@ -1,39 +1,111 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/Login';
-import Signup from './components/Signup';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import NoteTakingApp from './components/NoteTakingApp';
-import { auth } from '../src/firebase/config';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import Login from './components/Login';
+import { auth } from './firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const App = () => {
-  const [user, loading] = useAuthState(auth);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Protected Route Component
+  const ProtectedRoute = ({ children }) => {
+    if (loading) {
+      return (
+        <div className="h-screen w-screen flex items-center justify-center bg-gray-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      );
+    }
+
+    if (!user) {
+      return <Navigate to="/login" replace />;
+    }
+
+    return children;
+  };
+
+  // Public Route Component (for login page)
+  const PublicRoute = ({ children }) => {
+    if (loading) {
+      return (
+        <div className="h-screen w-screen flex items-center justify-center bg-gray-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      );
+    }
+
+    if (user) {
+      return <Navigate to="/dashboard" replace />;
+    }
+
+    return children;
+  };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         <Route 
           path="/login" 
-          element={user ? <Navigate to="/dashboard" /> : <Login />} 
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          } 
         />
-        <Route 
-          path="/signup" 
-          element={user ? <Navigate to="/dashboard" /> : <Signup />} 
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <NoteTakingApp />
+            </ProtectedRoute>
+          }
         />
-        <Route 
-          path="/dashboard" 
-          element={user ? <NoteTakingApp /> : <Navigate to="/login" />} 
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <NoteTakingApp />
+            </ProtectedRoute>
+          }
         />
-        <Route 
-          path="/" 
-          element={<Navigate to="/login" />} 
+        <Route
+          path="/starred"
+          element={
+            <ProtectedRoute>
+              <NoteTakingApp />
+            </ProtectedRoute>
+          }
         />
+        <Route
+          path="/archived"
+          element={
+            <ProtectedRoute>
+              <NoteTakingApp />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 };
 

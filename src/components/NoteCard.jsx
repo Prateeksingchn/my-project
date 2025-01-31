@@ -1,54 +1,77 @@
 import React from 'react';
-import { Star, Pencil } from 'lucide-react';
+import { Star, Pencil, Trash2 } from 'lucide-react';
 
-const NoteCard = ({ note, onEdit, onDelete, darkMode }) => {
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
+const NoteCard = ({ note, onEdit, onDelete, onTogglePin, darkMode }) => {
   return (
-    <div 
-      className="rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-lg group min-h-[250px] relative"
-      style={{ backgroundColor: note.color || '#FFE4B5' }} // Default to a soft yellow if no color
+    <div
+      className="p-4 rounded-2xl transition-transform transform hover:scale-105 bg-white shadow-lg border border-gray-200 flex flex-col"
+      style={{ 
+        height: '250px', 
+        backgroundColor: note.color || '#ffffff'
+      }}
     >
-      <div className="p-6 flex flex-col h-full">
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="text-xl font-semibold text-gray-800 flex-grow pr-4">
-            {note.title || 'Untitled Note'}
-          </h3>
-          <button className="text-gray-600 hover:text-yellow-500 transition-colors">
-            <Star size={20} />
-          </button>
-        </div>
-
-        <div className="flex-grow overflow-y-auto" style={{ maxHeight: '150px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          <style>
-            {`
-              /* Hide scrollbar for WebKit browsers */
-              .scrollbar-hidden::-webkit-scrollbar {
-                display: none;
-              }
-            `}
-          </style>
-          <p className="text-gray-700 text-base mb-4 scrollbar-hidden" 
-             dangerouslySetInnerHTML={{ __html: note.text.replace(/\n/g, '<br />') }} 
-          />
-        </div>
-
-        <div className="flex justify-between items-center mt-auto">
-          <span className="text-sm text-gray-800">
-            {formatDate(note.createdAt)}
-          </span>
+      {/* Header Section */}
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="font-semibold text-lg text-gray-900">
+          {note.title || 'Untitled'}
+        </h3>
+        <div className="flex items-center space-x-2">
           <button 
-            onClick={() => onEdit(note)}
-            className="p-2 rounded-full bg-black/10 hover:bg-black/20 transition-colors"
+            onClick={() => onTogglePin(note.id)} 
+            className="p-1 rounded-lg transition-colors duration-200 hover:bg-gray-100"
           >
-            <Pencil size={16} className="text-gray-700" />
+            <Star 
+              size={20} 
+              className={note.isPinned ? 'text-yellow-500' : 'text-gray-600'} 
+              fill={note.isPinned ? 'currentColor' : 'none'}
+            />
           </button>
+          <button 
+            onClick={() => onEdit(note)} 
+            className="p-1 rounded-lg transition-colors duration-200 hover:bg-gray-100"
+          >
+            <Pencil size={18} className="text-gray-600" />
+          </button>
+          <button 
+            onClick={() => onDelete(note.id)} 
+            className="p-1 rounded-lg transition-colors duration-200 hover:bg-gray-100"
+          >
+            <Trash2 size={18} className="text-gray-600" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="flex-grow overflow-hidden">
+        <p className="text-sm text-gray-700 whitespace-pre-wrap">
+          {note.text}
+        </p>
+      </div>
+
+      {/* Footer Section */}
+      <div className="mt-auto pt-4">
+        {/* Tags Section */}
+        {note.tags && note.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {note.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Category and Date Section */}
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-gray-500">
+            {note.category || 'Uncategorized'}
+          </span>
+          <span className="text-xs text-gray-500">
+            {new Date(note.createdAt).toLocaleDateString()}
+          </span>
         </div>
       </div>
     </div>

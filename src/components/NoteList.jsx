@@ -1,27 +1,23 @@
 import React from 'react';
+import { Edit2, Trash2, Star } from 'lucide-react';
 import NoteCard from './NoteCard';
 
-const NoteList = ({ notes, searchTerm, onEditNote, onDeleteNote, darkMode }) => {
-  const filteredNotes = notes.filter(note => 
-    note.text && note.text.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+const NoteList = ({ notes = [], viewMode, onEditNote, onDeleteNote, onTogglePin, darkMode }) => {
+  // Ensure notes is always an array and handle search/filter
+  const filteredNotes = notes?.filter(note => note?.text) || [];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-      {filteredNotes.map(note => (
+    <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-4`}>
+      {filteredNotes.map((note) => (
         <NoteCard
           key={note.id}
           note={note}
-          onEdit={() => onEditNote(note)}
-          onDelete={() => onDeleteNote(note.id)}
+          onEdit={onEditNote}
+          onDelete={onDeleteNote}
+          onTogglePin={onTogglePin}
           darkMode={darkMode}
         />
       ))}
-      {filteredNotes.length === 0 && (
-        <p className={`col-span-full text-center ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          No notes found.
-        </p>
-      )}
     </div>
   );
 };

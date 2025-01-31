@@ -9,8 +9,9 @@ import Sidebar from './Sidebar';
 import TodoList from './TodoList';
 import { auth, db } from '../firebase/config';
 import { signOut } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, doc, onSnapshot } from 'firebase/firestore';
+import SearchBar from './SearchBar';
 
 const NoteTakingApp = () => {
   const [notes, setNotes] = useState([]);
@@ -19,8 +20,13 @@ const NoteTakingApp = () => {
   const [editingNote, setEditingNote] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [categories, setCategories] = useState(['Work', 'Personal', 'Ideas', 'Study', 'Shopping', 'Health']);
+  const [viewMode, setViewMode] = useState('grid');
+  const [filterType, setFilterType] = useState('all');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine current view based on URL path
+  const currentView = location.pathname.split('/')[1] || 'dashboard';
 
   useEffect(() => {
     if (!auth.currentUser) return;
@@ -114,50 +120,125 @@ const NoteTakingApp = () => {
     }
   };
 
-  const filteredNotes = notes.filter(note => {
-    const noteDate = new Date(note.createdAt);
-    const today = new Date();
-    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const handleFilterChange = (type) => {
+    setFilterType(type);
+    if (type === 'starred') {
+      const starredNotes = notes.filter(note => note.isPinned);
+      setFilteredNotes(starredNotes);
+    } else if (type === 'archived') {
+      const archivedNotes = notes.filter(note => note.isArchived);
+      setFilteredNotes(archivedNotes);
+    } else {
+      setFilteredNotes(notes);
+    }
+  };
 
-    return (
-      (selectedCategory === 'All' || note.category === selectedCategory) &&
-      (searchTerm === 'Today' ? noteDate.toDateString() === today.toDateString() :
-       searchTerm === 'This Week' ? noteDate >= startOfWeek :
-       searchTerm === 'This Month' ? noteDate >= startOfMonth :
-       note.text && note.text.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  });
+  const toggleViewMode = () => {
+    setViewMode(prev => prev === 'grid' ? 'list' : 'grid');
+  };
+
+  const getFilteredNotes = () => {
+    let filteredNotes = [...notes];
+
+    // First apply view-based filtering
+    if (currentView === 'starred') {
+      filteredNotes = filteredNotes.filter(note => note.isPinned);
+    } else if (currentView === 'archived') {
+      filteredNotes = filteredNotes.filter(note => note.isArchived);
+    } else {
+      // For dashboard/home, show unarchived notes
+      filteredNotes = filteredNotes.filter(note => !note.isArchived);
+    }
+
+    // Then apply category filter if not 'All'
+    if (selectedCategory !== 'All') {
+      filteredNotes = filteredNotes.filter(note => note.category === selectedCategory);
+    }
+
+    // Then apply search term
+    if (searchTerm) {
+      const search = searchTerm.toLowerCase();
+      filteredNotes = filteredNotes.filter(note => {
+        const titleMatch = note.title?.toLowerCase().includes(search);
+        const contentMatch = note.text?.toLowerCase().includes(search);
+        const categoryMatch = note.category?.toLowerCase().includes(search);
+        const tagsMatch = note.tags?.some(tag => tag.toLowerCase().includes(search));
+        
+        return titleMatch || contentMatch || categoryMatch || tagsMatch;
+      });
+    }
+
+    return filteredNotes;
+  };
+
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+    // Reset other filters when searching
+    if (value) {
+      setFilterType('all');
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+  };
+
+  const handleTogglePin = async (noteId) => {
+    try {
+      const noteRef = doc(db, 'notes', noteId);
+      const note = notes.find(n => n.id === noteId);
+      await updateDoc(noteRef, {
+        isPinned: !note.isPinned,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error toggling pin:', error);
+    }
+  };
 
   return (
     <div className={`flex h-screen ${darkMode ? 'bg-[#191919]' : 'bg-gray-50'}`}>
       <Sidebar 
         darkMode={darkMode} 
-        onCreateNote={handleAddNote} 
+        onCreateNote={handleAddNote}
         onToggleTheme={toggleTheme}
+        viewMode={viewMode}
+        onToggleView={toggleViewMode}
+        currentView={currentView}
       />
       
-      <main className="flex-1" style={{ overflow: 'hidden', scrollbarWidth: 'none' }}>
-        <div className="max-w-5xl mx-auto p-4 sm:p-8 overflow-auto h-full" style={{ overflowY: 'scroll', scrollbarWidth: 'none' }}>
-          <div className="flex flex-col sm:flex-row items-center justify-between mb-8">
-            <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Notes</h1>
-            <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded">
-              Logout
-            </button>
-          </div>
-
-          <CategorySelector 
-            categories={['All', ...categories]} 
-            selectedCategory={selectedCategory} 
-            onCategoryChange={handleCategoryChange}
+      <main className="flex-1 overflow-hidden">
+        <div className="max-w-5xl mx-auto p-4 sm:p-8 h-full overflow-auto">
+          <SearchBar 
+            searchTerm={searchTerm}
+            onSearchChange={handleSearchChange}
+            onClearSearch={handleClearSearch}
             darkMode={darkMode}
           />
 
+          <div className="mb-8">
+            <CategorySelector 
+              selectedCategory={selectedCategory} 
+              onCategoryChange={handleCategoryChange}
+              darkMode={darkMode}
+            />
+          </div>
+
+          {/* Add view title */}
+          <div className="mb-6">
+            <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              {currentView === 'starred' ? 'Starred Notes' : 
+               currentView === 'archived' ? 'Archived Notes' : 
+               'All Notes'}
+            </h1>
+          </div>
+
           <NoteList
-            notes={filteredNotes}
-            searchTerm={searchTerm}
+            notes={getFilteredNotes()}
+            viewMode={viewMode}
             onEditNote={handleEditNote}
             onDeleteNote={handleDeleteNote}
+            onTogglePin={handleTogglePin}
             darkMode={darkMode}
           />
         </div>
@@ -169,8 +250,10 @@ const NoteTakingApp = () => {
         <NoteModal
           note={editingNote}
           onSave={handleSaveNote}
-          onClose={() => setShowModal(false)}
-          categories={categories}
+          onClose={() => {
+            setShowModal(false);
+            setEditingNote(null);
+          }}
           darkMode={darkMode}
         />
       )}
