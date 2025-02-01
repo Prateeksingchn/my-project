@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, Circle, PlusCircle, X } from 'lucide-react';
+import { CheckCircle2, Circle, Plus, Trash2 } from 'lucide-react';
 import { db, auth } from '../firebase/config';
 import { collection, query, where, addDoc, deleteDoc, updateDoc, doc, onSnapshot } from 'firebase/firestore';
 
-const TodoList = ({ darkMode }) => {
+const TodoList = ({ darkMode = true }) => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
 
@@ -67,46 +67,50 @@ const TodoList = ({ darkMode }) => {
   };
 
   return (
-    <div className={`w-80 border-l ${darkMode ? 'bg-[#202020] border-gray-800' : 'bg-gray-50 border-gray-200'}`}>
-      <div className="p-4">
-        <h2 className={`text-lg font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Quick Tasks</h2>
+    <div className="w-80 min-h-screen border-l border-gray-800 bg-[#1a1a1a]">
+      <div className="py-6 px-4">
+        <h2 className="text-xl font-semibold mb-6 text-white">Quick Tasks</h2>
         
-        <form onSubmit={addTodo} className="mb-4 flex">
-          <input
-            type="text"
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            placeholder="Add a task..."
-            className={`flex-1 p-2 rounded-lg mr-2 ${
-              darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
-            } border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
-          />
-          <button
-            type="submit"
-            className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
-          >
-            <PlusCircle size={20} />
-          </button>
+        <form onSubmit={addTodo} className="mb-6">
+          <div className="relative">
+            <input
+              type="text"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="Add a task..."
+              className="w-full pl-4 pr-12 py-3 rounded-xl bg-[#2a2a2a] text-white placeholder-gray-400 border-2 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+            />
+            <button
+              type="submit"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+            >
+              <Plus size={20} />
+            </button>
+          </div>
         </form>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           {todos.map((todo) => (
             <div
               key={todo.id}
-              className={`flex items-center justify-between p-2 rounded-lg ${
-                darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
-              }`}
+              className={`group flex items-center justify-between py-3 px-1 rounded-xl transition-all ${
+                todo.completed ? 'bg-opacity-50' : ''
+              } hover:bg-[#2a2a2a]`}
             >
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3 flex-1">
                 <button
                   onClick={() => toggleTodo(todo.id)}
-                  className={`p-1 rounded-full ${todo.completed ? 'text-green-500' : 'text-gray-400'}`}
+                  className={`p-1 rounded-full transition-colors ${
+                    todo.completed ? 'text-green-500' : 'text-gray-400 hover:text-gray-300'
+                  }`}
                 >
-                  {todo.completed ? <CheckCircle2 size={20} /> : <Circle size={20} />}
+                  {todo.completed ? <CheckCircle2 size={22} /> : <Circle size={22} />}
                 </button>
                 <span
-                  className={`${
-                    todo.completed ? 'line-through text-gray-500' : darkMode ? 'text-white' : 'text-gray-900'
+                  className={`text-sm transition-all ${
+                    todo.completed 
+                      ? 'line-through text-gray-500' 
+                      : 'text-gray-100'
                   }`}
                 >
                   {todo.text}
@@ -114,9 +118,9 @@ const TodoList = ({ darkMode }) => {
               </div>
               <button
                 onClick={() => deleteTodo(todo.id)}
-                className="p-1 rounded-full hover:bg-gray-200 text-gray-500"
+                className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-all"
               >
-                <X size={16} />
+                <Trash2 size={18} />
               </button>
             </div>
           ))}
