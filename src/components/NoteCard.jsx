@@ -19,25 +19,21 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin }) => {
     return brightness > 155; // Adjusted threshold for pastel colors
   };
 
-  // Determine text and border colors based on background color
-  const shouldUseDarkText = note.color ? isLightColor(note.color) : true;
-  const textColor = shouldUseDarkText ? 'text-gray-800' : 'text-gray-100';
-  const buttonHoverBg = shouldUseDarkText ? 'hover:bg-black/10' : 'hover:bg-white/20';
-  const tagBg = shouldUseDarkText ? 'bg-black/10' : 'bg-white/20';
-  const tagText = shouldUseDarkText ? 'text-gray-700' : 'text-gray-100';
+  // Remove the text color logic based on background
+  const buttonHoverBg = 'hover:bg-black/10';
+  const tagBg = 'bg-black/10';
 
   return (
-    <div
-      className={`p-5 rounded-3xl transition-all duration-300 hover:scale-[1.02] shadow-lg 
-      backdrop-blur-sm border flex flex-col ${textColor} hover:shadow-xl
+    <div className="note-card p-5 rounded-3xl transition-all duration-300 hover:scale-[1.02] shadow-lg 
+      backdrop-blur-sm border flex flex-col text-gray-800 hover:shadow-xl
       group relative overflow-hidden hover:after:opacity-100 after:opacity-0
       after:absolute after:inset-0 after:bg-gradient-to-b 
       after:from-white/[0.07] after:to-transparent after:transition-opacity
-      after:duration-300 after:rounded-3xl`}
+      after:duration-300 after:rounded-3xl"
       style={{ 
         height: '270px', 
         backgroundColor: `${note.color}ee` || '#ffffff',
-        borderColor: shouldUseDarkText ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.15)',
+        borderColor: 'rgba(0, 0, 0, 0.1)',
         backdropFilter: 'blur(8px)',
         boxShadow: `0 4px 30px ${note.color ? note.color + '20' : 'rgba(0, 0, 0, 0.1)'}`,
       }}
@@ -55,7 +51,7 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin }) => {
           >
             <Star 
               size={18} 
-              className={`transition-colors duration-200 ${note.isPinned ? 'text-yellow-500' : textColor}`}
+              className={`transition-colors duration-200 ${note.isPinned ? 'text-yellow-500' : 'text-gray-800'}`}
               fill={note.isPinned ? 'currentColor' : 'none'}
             />
           </button>
@@ -64,27 +60,29 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin }) => {
             className={`p-1.5 rounded-xl transition-all duration-200 ${buttonHoverBg}
             hover:scale-110 active:scale-95`}
           >
-            <Pencil size={16} className={textColor} />
+            <Pencil size={16} className="text-gray-800" />
           </button>
           <button 
             onClick={() => onDelete(note.id)} 
             className={`p-1.5 rounded-xl transition-all duration-200 ${buttonHoverBg}
             hover:scale-110 active:scale-95`}
           >
-            <Trash2 size={16} className={textColor} />
+            <Trash2 size={16} className="text-gray-800" />
           </button>
         </div>
       </div>
 
       <div className="flex-grow overflow-hidden relative z-10">
         <div 
-          className={`prose prose-sm max-w-none h-full overflow-y-auto ${textColor} leading-relaxed
-          transition-transform duration-300 group-hover:scale-[1.01] scrollbar-hide`}
+          className={`prose prose-sm max-w-none h-full overflow-y-auto text-gray-800 leading-relaxed
+          transition-transform duration-300 group-hover:scale-[1.01] scrollbar-hide
+          prose-headings:text-gray-800 prose-p:text-gray-800 prose-li:text-gray-800 
+          prose-strong:text-gray-800 prose-code:text-gray-800`}
           style={{
-            scrollbarWidth: 'none',  // Firefox
-            msOverflowStyle: 'none',  // IE and Edge
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
             '&::-webkit-scrollbar': {
-              display: 'none'  // Chrome, Safari, Opera
+              display: 'none'
             }
           }}
           dangerouslySetInnerHTML={createMarkup(note.text)}
@@ -97,7 +95,7 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin }) => {
             {note.tags.map((tag, index) => (
               <span
                 key={index}
-                className={`px-2.5 py-1 rounded-full text-xs font-medium ${tagBg} ${tagText}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium ${tagBg} text-gray-800
                 transition-all duration-300 hover:scale-105 hover:rotate-1
                 hover:shadow-sm`}
               >
@@ -109,10 +107,10 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin }) => {
 
         <div className="flex justify-between items-center text-xs opacity-75
           transition-transform duration-300 group-hover:translate-y-[-2px]">
-          <span className={`${textColor} font-medium`}>
+          <span className="text-gray-800 font-medium">
             {note.category || 'Uncategorized'}
           </span>
-          <span className={textColor}>
+          <span className="text-gray-800">
             {new Date(note.createdAt).toLocaleDateString()}
           </span>
         </div>
@@ -122,3 +120,25 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin }) => {
 };
 
 export default NoteCard;
+
+<style jsx global>{`
+  /* Make bullet points and numbers dark in NoteCard */
+  .note-card .ql-editor ul li:before {
+    color: #1f2937 !important; /* dark gray color */
+  }
+
+  .note-card .ql-editor ol li:before {
+    color: #1f2937 !important; /* dark gray color */
+  }
+
+  /* Ensure the bullet point size and alignment */
+  .note-card .ql-editor ul li:not(.ql-direction-rtl)::before {
+    font-size: 14px;
+    margin-right: 0.5em;
+  }
+
+  .note-card .ql-editor ol li:not(.ql-direction-rtl)::before {
+    font-size: 13px;
+    margin-right: 0.5em;
+  }
+`}</style>
