@@ -1,218 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { X, Palette, Tag, Pin, PinOff, Bold, Italic, List, ListOrdered, Quote, Code, Link } from 'lucide-react';
+import { X, Palette, Tag, Pin, PinOff } from 'lucide-react';
 import { ChromePicker } from 'react-color';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
-const MenuBar = ({ editor, darkMode }) => {
-  if (!editor) {
-    return null;
-  }
-
-  const buttonClass = `p-2 rounded-lg transition-colors ${
-    darkMode 
-      ? 'hover:bg-gray-700 text-gray-300' 
-      : 'hover:bg-gray-100 text-gray-700'
-  }`;
-
-  const activeButtonClass = `p-2 rounded-lg ${
-    darkMode 
-      ? 'bg-gray-700 text-white' 
-      : 'bg-gray-200 text-gray-900'
-  }`;
-
-  return (
-    <div className="flex items-center gap-1 mb-4 p-1 rounded-lg border border-gray-200 dark:border-gray-700">
-      <button
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={editor.isActive('bold') ? activeButtonClass : buttonClass}
-        title="Bold (Ctrl+B)"
-      >
-        <Bold size={18} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={editor.isActive('italic') ? activeButtonClass : buttonClass}
-        title="Italic (Ctrl+I)"
-      >
-        <Italic size={18} />
-      </button>
-      <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1" />
-      <button
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={editor.isActive('bulletList') ? activeButtonClass : buttonClass}
-        title="Bullet List"
-      >
-        <List size={18} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={editor.isActive('orderedList') ? activeButtonClass : buttonClass}
-        title="Numbered List"
-      >
-        <ListOrdered size={18} />
-      </button>
-      <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1" />
-      <button
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={editor.isActive('blockquote') ? activeButtonClass : buttonClass}
-        title="Quote"
-      >
-        <Quote size={18} />
-      </button>
-      <button
-        onClick={() => editor.chain().focus().toggleCode().run()}
-        className={editor.isActive('code') ? activeButtonClass : buttonClass}
-        title="Code"
-      >
-        <Code size={18} />
-      </button>
-    </div>
-  );
-};
-
-const NoteModal = ({ note, onSave, onClose, darkMode }) => {
+const NoteModal = ({ note, onSave, onClose }) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [noteData, setNoteData] = useState({
     title: note?.title || '',
     text: note?.text || '',
     category: note?.category || '',
     tags: note?.tags || [],
-    color: note?.color || (darkMode ? '#2A2A2A' : '#ffffff'),
+    color: note?.color || '#ffffff',
     isPinned: note?.isPinned || false,
   });
 
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: noteData.text,
-    editorProps: {
-      attributes: {
-        class: `prose prose-lg focus:outline-none max-w-none ${
-          darkMode ? 'prose-invert' : ''
-        }`,
-      },
-    },
-    onUpdate: ({ editor }) => {
-      setNoteData(prev => ({
-        ...prev,
-        text: editor.getHTML()
-      }));
-    },
-  });
+  const modules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['blockquote', 'code-block'],
+      ['clean']
+    ]
+  };
 
-  const categories = [
-    'Personal',
-    'Work',
-    'Study',
-    'Ideas',
-    'To-Do',
-    'Other'
+  const formats = [
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'blockquote', 'code-block'
   ];
 
   useEffect(() => {
-    if (note && editor) {
-      editor.commands.setContent(note.text);
+    if (note) {
       setNoteData({
         title: note.title || '',
         text: note.text || '',
         category: note.category || '',
         tags: note.tags || [],
-        color: note.color || (darkMode ? '#2A2A2A' : '#ffffff'),
+        color: note.color || '#ffffff',
         isPinned: note.isPinned || false,
       });
     }
-  }, [note, editor]);
-
-  const handleTagInput = (e) => {
-    if (e.key === 'Enter' && e.target.value.trim()) {
-      e.preventDefault();
-      const newTag = e.target.value.trim();
-      if (!noteData.tags.includes(newTag)) {
-        setNoteData(prev => ({
-          ...prev,
-          tags: [...prev.tags, newTag]
-        }));
-      }
-      e.target.value = '';
-    }
-  };
-
-  const removeTag = (tagToRemove) => {
-    setNoteData(prev => ({
-      ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
-    }));
-  };
+  }, [note]);
 
   const handleSave = () => {
-    onSave({
-      ...noteData,
-      text: editor.getHTML()
-    });
-  };
-
-  const handleColorChange = (color) => {
-    setNoteData(prev => ({
-      ...prev,
-      color: color.hex
-    }));
-    setShowColorPicker(false);
+    onSave(noteData);
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
-      <div 
-        className="w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden"
-        style={{ backgroundColor: noteData.color }}
-      >
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/70 backdrop-blur-sm">
+      <div className="w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden bg-gray-800">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-6 border-b border-gray-700">
           <div className="flex items-center justify-between mb-4">
             <input
               type="text"
               placeholder="Title"
               value={noteData.title}
               onChange={(e) => setNoteData(prev => ({ ...prev, title: e.target.value }))}
-              className={`text-2xl font-semibold bg-transparent focus:outline-none w-full ${
-                darkMode ? 'placeholder-gray-500 text-white' : 'placeholder-gray-400 text-gray-900'
-              }`}
+              className="text-2xl font-semibold bg-transparent focus:outline-none w-full text-white placeholder-gray-500"
             />
             <button 
               onClick={onClose}
-              className="p-2 hover:bg-black/10 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-700 rounded-full transition-colors"
             >
-              <X size={20} className={darkMode ? 'text-gray-400' : 'text-gray-600'} />
+              <X size={20} className="text-gray-400" />
             </button>
           </div>
-
-          <MenuBar editor={editor} darkMode={darkMode} />
 
           {/* Note Options */}
           <div className="flex items-center gap-2 flex-wrap">
             <select
               value={noteData.category}
               onChange={(e) => setNoteData(prev => ({ ...prev, category: e.target.value }))}
-              className={`px-3 py-1.5 rounded-lg text-sm border ${
-                darkMode 
-                  ? 'bg-gray-800 text-gray-300 border-gray-700' 
-                  : 'bg-white text-gray-700 border-gray-200'
-              }`}
+              className="px-3 py-1.5 rounded-lg text-sm bg-gray-700 text-gray-300 border-gray-600"
             >
               <option value="">Select Category</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>{category}</option>
-              ))}
+              <option value="Personal">Personal</option>
+              <option value="Work">Work</option>
+              <option value="Study">Study</option>
+              <option value="Ideas">Ideas</option>
+              <option value="To-Do">To-Do</option>
             </select>
 
             <button
               onClick={() => setShowColorPicker(!showColorPicker)}
-              className={`px-3 py-1.5 rounded-lg text-sm flex items-center gap-1.5 ${
-                darkMode 
-                  ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' 
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
-              }`}
+              className="px-3 py-1.5 rounded-lg text-sm flex items-center gap-1.5 bg-gray-700 text-gray-300 hover:bg-gray-600"
             >
-              <Palette size={16} />
+              <div 
+                className="w-3 h-3 rounded-full border border-gray-400"
+                style={{ backgroundColor: noteData.color }}
+              />
               Color
             </button>
 
@@ -221,9 +99,7 @@ const NoteModal = ({ note, onSave, onClose, darkMode }) => {
               className={`px-3 py-1.5 rounded-lg text-sm flex items-center gap-1.5 ${
                 noteData.isPinned
                   ? 'bg-yellow-500 text-white'
-                  : darkMode
-                    ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
               {noteData.isPinned ? <Pin size={16} /> : <PinOff size={16} />}
@@ -232,23 +108,38 @@ const NoteModal = ({ note, onSave, onClose, darkMode }) => {
           </div>
         </div>
 
-        {/* Content Area */}
+        {/* Editor */}
         <div className="p-6">
-          <EditorContent editor={editor} className="min-h-[300px]" />
+          <ReactQuill
+            theme="snow"
+            value={noteData.text}
+            onChange={(content) => setNoteData(prev => ({ ...prev, text: content }))}
+            modules={modules}
+            formats={formats}
+            className="bg-gray-900 text-white"
+          />
 
           {/* Tags Section */}
           <div className="space-y-2 mt-4">
-            <div className="flex items-center gap-2 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
-              <Tag size={16} className={darkMode ? 'text-gray-400' : 'text-gray-600'} />
+            <div className="flex items-center gap-2 p-2 rounded-lg border border-gray-700">
+              <Tag size={16} className="text-gray-400" />
               <input
                 type="text"
                 placeholder="Add tags (press Enter)"
-                onKeyDown={handleTagInput}
-                className={`w-full bg-transparent focus:outline-none ${
-                  darkMode 
-                    ? 'placeholder-gray-500 text-white' 
-                    : 'placeholder-gray-400 text-gray-900'
-                }`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.target.value.trim()) {
+                    e.preventDefault();
+                    const newTag = e.target.value.trim();
+                    if (!noteData.tags.includes(newTag)) {
+                      setNoteData(prev => ({
+                        ...prev,
+                        tags: [...prev.tags, newTag]
+                      }));
+                      e.target.value = '';
+                    }
+                  }
+                }}
+                className="w-full bg-transparent focus:outline-none text-white placeholder-gray-500"
               />
             </div>
             
@@ -256,13 +147,16 @@ const NoteModal = ({ note, onSave, onClose, darkMode }) => {
               {noteData.tags?.map((tag, index) => (
                 <span
                   key={index}
-                  className={`px-3 py-1 rounded-lg text-sm flex items-center gap-1.5 ${
-                    darkMode ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-700'
-                  }`}
+                  className="px-3 py-1 rounded-lg text-sm flex items-center gap-1.5 bg-gray-700 text-gray-300"
                 >
                   #{tag}
                   <button
-                    onClick={() => removeTag(tag)}
+                    onClick={() => {
+                      setNoteData(prev => ({
+                        ...prev,
+                        tags: prev.tags.filter(t => t !== tag)
+                      }));
+                    }}
                     className="hover:text-red-500 transition-colors"
                   >
                     ×
@@ -274,14 +168,10 @@ const NoteModal = ({ note, onSave, onClose, darkMode }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+        <div className="p-4 border-t border-gray-700 flex justify-end gap-2">
           <button
             onClick={onClose}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              darkMode 
-                ? 'hover:bg-gray-800 text-gray-300' 
-                : 'hover:bg-gray-100 text-gray-700'
-            }`}
+            className="px-4 py-2 rounded-lg transition-colors hover:bg-gray-700 text-gray-300"
           >
             Cancel
           </button>
@@ -303,7 +193,7 @@ const NoteModal = ({ note, onSave, onClose, darkMode }) => {
             <div className="relative">
               <ChromePicker
                 color={noteData.color}
-                onChange={handleColorChange}
+                onChange={(color) => setNoteData(prev => ({ ...prev, color: color.hex }))}
               />
             </div>
           </div>

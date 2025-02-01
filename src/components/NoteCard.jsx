@@ -1,13 +1,34 @@
 import React from 'react';
 import { Star, Pencil, Trash2 } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
-const NoteCard = ({ note, onEdit, onDelete, onTogglePin, darkMode }) => {
+const NoteCard = ({ note, onEdit, onDelete, onTogglePin }) => {
+  // Function to safely render HTML content
+  const createMarkup = (html) => {
+    return { __html: DOMPurify.sanitize(html) };
+  };
+
+  // Function to determine if the background color is light or dark
+  const isLightColor = (color) => {
+    if (!color) return true;
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return brightness > 128;
+  };
+
+  // Determine text color based on background color
+  const shouldUseDarkText = note.color ? isLightColor(note.color) : false;
+
   return (
     <div
-      className="p-4 rounded-2xl transition-transform transform hover:scale-105 bg-white shadow-lg border border-gray-200 flex flex-col"
+      className="p-4 rounded-2xl transition-transform transform hover:scale-105 shadow-lg border flex flex-col"
       style={{ 
         height: '250px', 
-        backgroundColor: note.color || '#ffffff'
+        backgroundColor: note.color || '#ffffff',
+        borderColor: '#e5e7eb'
       }}
     >
       {/* Header Section */}
@@ -43,9 +64,10 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin, darkMode }) => {
 
       {/* Content Section */}
       <div className="flex-grow overflow-hidden">
-        <p className="text-sm text-gray-700 whitespace-pre-wrap">
-          {note.text}
-        </p>
+        <div 
+          className="prose prose-sm max-w-none line-clamp-6 text-gray-800"
+          dangerouslySetInnerHTML={createMarkup(note.text)}
+        />
       </div>
 
       {/* Footer Section */}
@@ -66,10 +88,10 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin, darkMode }) => {
 
         {/* Category and Date Section */}
         <div className="flex justify-between items-center">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-600">
             {note.category || 'Uncategorized'}
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-600">
             {new Date(note.createdAt).toLocaleDateString()}
           </span>
         </div>

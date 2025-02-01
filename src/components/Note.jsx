@@ -5,17 +5,7 @@ import DOMPurify from 'dompurify';
 const Note = ({ note, onEdit, onDelete, onToggleStar, onTogglePin, darkMode }) => {
   // Function to safely render HTML content with sanitization
   const createMarkup = (html) => {
-    const sanitizedHtml = DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'blockquote', 'code'],
-      ALLOWED_ATTR: []
-    });
-    return { __html: sanitizedHtml };
-  };
-
-  // Function to strip HTML tags for preview
-  const stripHtml = (html) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || '';
+    return { __html: DOMPurify.sanitize(html) };
   };
 
   return (
@@ -48,19 +38,13 @@ const Note = ({ note, onEdit, onDelete, onToggleStar, onTogglePin, darkMode }) =
 
       {/* Note Content */}
       <div 
-        className={`prose prose-sm flex-grow mb-4 overflow-hidden ${
+        className={`prose prose-sm flex-grow mb-4 overflow-hidden line-clamp-6 ${
           darkMode ? 'prose-invert' : ''
         } ${
-          darkMode 
-            ? 'text-gray-300' 
-            : 'text-gray-700'
+          darkMode ? 'text-gray-300' : 'text-gray-700'
         }`}
-      >
-        <div 
-          dangerouslySetInnerHTML={createMarkup(note.text)}
-          className="line-clamp-6"
-        />
-      </div>
+        dangerouslySetInnerHTML={createMarkup(note.text)}
+      />
 
       {/* Note Footer */}
       <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-200 dark:border-gray-700">

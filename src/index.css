@@ -1,3 +1,74 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Quill Editor Dark Theme */
+.quill-dark .ql-toolbar {
+  border-color: #374151 !important;
+  background-color: #1F2937;
+}
+
+.quill-dark .ql-container {
+  border-color: #374151 !important;
+}
+
+.quill-dark .ql-editor {
+  color: white;
+}
+
+.quill-dark .ql-stroke {
+  stroke: #9CA3AF !important;
+}
+
+.quill-dark .ql-fill {
+  fill: #9CA3AF !important;
+}
+
+.quill-dark .ql-picker {
+  color: #9CA3AF !important;
+}
+
+.quill-dark .ql-picker-options {
+  background-color: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Note Card Content Styles */
+.prose ul, .prose ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin: 0;
+  padding: 0;
+}
+
+.prose p {
+  margin: 0;
+}
+
+.prose blockquote {
+  margin: 0.5rem 0;
+  padding-left: 1rem;
+  border-left: 2px solid currentColor;
+}
+
+.prose pre {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  overflow-x: auto;
+}
+
+.prose code {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+/* Dark mode adjustments */
+.dark .prose pre,
+.dark .prose code {
+  background-color: rgba(255, 255, 255, 0.1);
+}
