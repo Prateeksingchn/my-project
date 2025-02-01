@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import NoteTakingApp from './components/NoteTakingApp';
 import Login from './components/Login';
+import Signup from './components/Signup';
 import { auth } from './firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -101,6 +102,14 @@ const App = () => {
             <ProtectedRoute>
               <NoteTakingApp />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <Signup />
+            </PublicRoute>
           }
         />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
