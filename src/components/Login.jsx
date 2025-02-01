@@ -329,13 +329,13 @@ const Login = () => {
       </div>
 
       {/* Right side - Background Image with Text */}
-      <div className="hidden lg:block lg:w-[50%] relative m-3">
+      <div className="hidden lg:block lg:w-[45%] relative m-3">
         <img
           src="https://images.unsplash.com/photo-1633153010796-6cf54b5daebb"
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover rounded-tl-[50px] rounded-br-[50px]"
         />
-        <div className="absolute bottom-[5px] left-0 right-0 h-64 flex flex-col items-start text-white p-5 space-y-2">
+        <div className="absolute bottom-[15px] left-0 right-0 h-[250px] flex flex-col items-start text-white p-5 space-y-2">
           {/* Top-left corner */}
           <h1 className="text-[2.3rem] tracking-wider font-['Ephesis']">
             Your Digital Notebook
