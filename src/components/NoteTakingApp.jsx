@@ -207,7 +207,26 @@ const NoteTakingApp = () => {
         currentView={currentView}
       />
       
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden"
+            style={{
+              overflowY: 'auto',
+              scrollbarWidth: '4px',
+              scrollbarColor: '#4b5563 transparent',
+              '&::-webkit-scrollbar': {
+                width: '4px',
+                backgroundColor: 'transparent',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: '#4b5563',
+                borderRadius: '4px',
+                height: '10px',
+                transition: 'background-color 0.2s ease',
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                backgroundColor: '#6b7280',
+              },
+            }}
+      >
         <div className="max-w-5xl mx-auto p-4 sm:p-8 h-full overflow-auto">
           <SearchBar 
             searchTerm={searchTerm}

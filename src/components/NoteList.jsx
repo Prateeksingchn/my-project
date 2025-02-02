@@ -1,5 +1,4 @@
 import React from 'react';
-import { Edit2, Trash2, Star } from 'lucide-react';
 import NoteCard from './NoteCard';
 
 const NoteList = ({ notes = [], viewMode, onEditNote, onDeleteNote, onTogglePin, darkMode }) => {

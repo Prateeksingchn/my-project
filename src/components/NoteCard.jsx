@@ -79,11 +79,19 @@ const NoteCard = ({ note, onEdit, onDelete, onTogglePin }) => {
           prose-headings:text-gray-800 prose-p:text-gray-800 prose-li:text-gray-800 
           prose-strong:text-gray-800 prose-code:text-gray-800`}
           style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#4b5563 transparent',
             '&::-webkit-scrollbar': {
-              display: 'none'
-            }
+              width: '8px',
+              backgroundColor: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#4b5563',
+              borderRadius: '10px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              backgroundColor: '#6b7280',
+            },
           }}
           dangerouslySetInnerHTML={createMarkup(note.text)}
         />

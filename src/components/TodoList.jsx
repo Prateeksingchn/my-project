@@ -67,9 +67,9 @@ const TodoList = ({ darkMode = true }) => {
   };
 
   return (
-    <div className="w-80 min-h-screen border-l border-gray-800 bg-[#1a1a1a]">
-      <div className="py-6 px-4">
-        <h2 className="text-xl font-semibold mb-6 text-white">Quick Tasks</h2>
+    <div className={`w-80 min-h-screen border-l ${darkMode ? 'border-gray-800 bg-[#1a1a1a]' : 'border-gray-300 bg-gray-50'}`}>
+      <div className={`py-6 px-4 ${darkMode ? 'text-white' : 'text-black'}`}>
+        <h2 className="text-xl font-semibold mb-6">Quick Tasks</h2>
         
         <form onSubmit={addTodo} className="mb-6">
           <div className="relative">
@@ -78,7 +78,7 @@ const TodoList = ({ darkMode = true }) => {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               placeholder="Add a task..."
-              className="w-full pl-4 pr-12 py-3 rounded-xl bg-[#2a2a2a] text-white placeholder-gray-400 border-2 border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+              className={`w-full pl-4 pr-12 py-3 rounded-xl ${darkMode ? 'bg-[#2a2a2a] text-white placeholder-gray-400 border-gray-700' : 'bg-white text-black placeholder-gray-500 border-gray-300'} focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all`}
             />
             <button
               type="submit"
@@ -95,7 +95,7 @@ const TodoList = ({ darkMode = true }) => {
               key={todo.id}
               className={`group flex items-center justify-between py-3 px-1 rounded-xl transition-all ${
                 todo.completed ? 'bg-opacity-50' : ''
-              } hover:bg-[#2a2a2a]`}
+              } ${darkMode ? 'hover:bg-[#2a2a2a]' : 'hover:bg-gray-200'}`}
             >
               <div className="flex items-center space-x-3 flex-1">
                 <button
@@ -110,7 +110,7 @@ const TodoList = ({ darkMode = true }) => {
                   className={`text-sm transition-all ${
                     todo.completed 
                       ? 'line-through text-gray-500' 
-                      : 'text-gray-100'
+                      : darkMode ? 'text-gray-100' : 'text-gray-800'
                   }`}
                 >
                   {todo.text}
